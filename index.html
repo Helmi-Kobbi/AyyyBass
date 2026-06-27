@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AyyyBass — playground</title>
+<style>
+  :root { --yellow:#FFD21E; --bg:#16191b; --panel:#202528; --line:#33383b; --text:#e6e8e9; --muted:#9aa0a3; --red:#e24b4a; --cyan:#7fe3d5; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,Segoe UI,Roboto,sans-serif; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:760px; margin:0 auto; padding:24px 18px 48px; }
+  h1 { font-weight:500; font-size:20px; margin:0 0 2px; }
+  .sub { color:var(--muted); font-size:13px; margin:0 0 20px; }
+  .stage { display:flex; gap:24px; align-items:center; flex-wrap:wrap; }
+  .smiley { cursor:pointer; user-select:none; transition:transform .07s ease; flex:0 0 auto; }
+  .smiley:active { transform:scale(0.94); }
+  .stagecol { flex:1 1 260px; min-width:240px; }
+  .seedline { font-size:13px; color:var(--muted); margin:0 0 8px; }
+  .seedline b { color:var(--cyan); font-weight:500; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; margin:14px 0 0; }
+  button.act { background:transparent; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:9px 14px; font-size:14px; cursor:pointer; }
+  button.act:hover { border-color:#555b5e; background:#262b2e; }
+  button.keep { border-color:#5a3a3f; color:#f0b9b9; }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin-top:22px; }
+  .ctrl { display:grid; grid-template-columns:84px 1fr 56px; align-items:center; gap:12px; margin:12px 0; }
+  .ctrl label { font-size:13px; color:var(--muted); }
+  .ctrl output { font-size:13px; color:var(--text); text-align:right; font-variant-numeric:tabular-nums; }
+  input[type=range]{ width:100%; accent-color:var(--yellow); }
+  select { background:#15181a; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:6px 8px; font-size:13px; }
+  .toggles { display:flex; gap:18px; flex-wrap:wrap; margin-top:6px; }
+  .toggles label { font-size:13px; color:var(--text); display:flex; gap:7px; align-items:center; cursor:pointer; }
+  .steps { display:flex; gap:4px; flex-wrap:wrap; margin-top:6px; }
+  .cell { width:20px; height:30px; border-radius:4px; background:#2c3134; border:1px solid #3a4044; position:relative; }
+  .cell.on { background:var(--yellow); border-color:#caa50f; }
+  .cell .acc { position:absolute; top:2px; left:50%; transform:translateX(-50%); width:5px; height:5px; border-radius:50%; background:#16191b; opacity:0; }
+  .cell.on .acc.show { opacity:1; }
+  .cell .sl { position:absolute; bottom:1px; left:50%; transform:translateX(-50%); font-size:9px; color:#16191b; opacity:0; line-height:1; }
+  .cell.on .sl.show { opacity:1; }
+  .kept { margin-top:8px; font-size:13px; color:var(--muted); line-height:1.8; }
+  .kept code { color:var(--cyan); background:#15181a; padding:1px 6px; border-radius:5px; }
+  .hint { color:var(--muted); font-size:12px; margin-top:18px; line-height:1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>AyyyBass <span style="color:var(--muted);font-weight:400;">— playground</span></h1>
+  <p class="sub">press the smiley → hear a Maghrebi-acid line. don't like it? press again. like it? keep it.</p>
+
+  <div class="stage">
+    <svg class="smiley" id="smiley" width="150" height="150" viewBox="0 0 150 150" role="button" aria-label="generate">
+      <circle cx="75" cy="75" r="70" fill="#FFD21E"/>
+      <ellipse cx="52" cy="60" rx="8" ry="15" fill="#141414"/>
+      <ellipse cx="98" cy="60" rx="8" ry="15" fill="#141414"/>
+      <path d="M44 88 Q75 124 106 88" fill="none" stroke="#141414" stroke-width="11" stroke-linecap="round"/>
+    </svg>
+    <div class="stagecol">
+      <p class="seedline">pattern <b id="seedlbl">—</b></p>
+      <div class="steps" id="steps"></div>
+      <div class="row">
+        <button class="act" id="genBtn" style="border-color:#caa50f;color:var(--yellow);">generate</button>
+        <button class="act" id="mutBtn">mutate</button>
+        <button class="act keep" id="keepBtn">♥ keep</button>
+        <button class="act" id="stopBtn">stop</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="ctrl">
+      <label for="scale">scale</label>
+      <select id="scale">
+        <option value="hijaz">hijaz (Maghrebi)</option>
+        <option value="pentatonic">pentatonic (Gnawa)</option>
+        <option value="kurd">kurd</option>
+        <option value="nahawand">nahawand</option>
+      </select>
+      <output></output>
+    </div>
+    <div class="ctrl">
+      <label for="length">length</label>
+      <input type="range" id="length" min="3" max="16" step="1" value="7" />
+      <output id="lengthOut">7</output>
+    </div>
+    <div class="ctrl">
+      <label for="density">density</label>
+      <input type="range" id="density" min="0.15" max="0.95" step="0.05" value="0.55" />
+      <output id="densityOut">0.55</output>
+    </div>
+    <div class="ctrl">
+      <label for="tempo">tempo</label>
+      <input type="range" id="tempo" min="90" max="160" step="1" value="128" />
+      <output id="tempoOut">128</output>
+    </div>
+    <div class="toggles">
+      <label><input type="checkbox" id="ternary" checked /> ternary feel (6/8)</label>
+      <label><input type="checkbox" id="drums" checked /> drums</label>
+    </div>
+  </div>
+
+  <div class="kept" id="kept"></div>
+
+  <p class="hint">
+    This runs a faithful JS twin of the C++ brain — seed numbers match the real engine.
+    Keep the ones you like and tell me their numbers; that's how we tune the feel by ear.
+  </p>
+</div>
+
+<script>
+"use strict";
+
+// ---------- brain (faithful port of the C++ core) ----------
+function makeRng(seed){
+  let s = (seed>>>0) || 0x9E3779B9;
+  return {
+    next(){ let x=s|0; x^=x<<13; x^=x>>>17; x^=x<<5; s=x>>>0; return s; },
+    nextFloat(){ return (this.next()>>>8) * (1/16777216); },
+    below(n){ return n>0 ? (this.next() % n) : 0; },
+    chance(p){ return this.nextFloat() < p; }
+  };
+}
+const SCALES = {
+  pentatonic:{ degrees:[0,3,5,7,10], count:5 },
+  hijaz:     { degrees:[0,1,4,5,7,8,10], count:7 },
+  kurd:      { degrees:[0,1,3,5,7,8,10], count:7 },
+  nahawand:  { degrees:[0,2,3,5,7,8,10], count:7 },
+};
+function clamp(v,lo,hi){ return Math.max(lo, Math.min(v,hi)); }
+function degreeToNote(sc, root, degreeStep){
+  let oct = Math.trunc(degreeStep / sc.count);
+  let idx = degreeStep % sc.count;
+  if (idx < 0){ idx += sc.count; oct -= 1; }
+  return root + oct*12 + sc.degrees[idx];
+}
+function blankPattern(){
+  const steps = [];
+  for (let i=0;i<32;i++) steps.push({active:false,note:0,velocity:80,accent:false,slide:false});
+  return steps;
+}
+function generate(seed, p){
+  const pat = { steps:blankPattern(), length:clamp(p.length,1,32), ternary:p.ternary, seed:seed>>>0 };
+  const rng = makeRng(seed);
+  const sc = SCALES[p.scale] || SCALES.hijaz;
+  const span = Math.max(1, p.octaveSpan||1);
+  const maxDegree = sc.count*span;
+  let fifth=0; for (let d=0; d<sc.count; d++) if (sc.degrees[d]===7){ fifth=d; break; }
+  let degree=0;
+  for (let i=0;i<pat.length;i++){
+    const s = pat.steps[i];
+    const first = (i===0);
+    s.active = first || rng.chance(0.25 + 0.7*p.density);
+    if (s.active){
+      if (!first){
+        const r = rng.nextFloat();
+        if (r<0.45) degree=0;
+        else if (r<0.65) degree=fifth;
+        else if (r<0.85) degree += (rng.chance(0.5)?1:-1);
+        else degree += (rng.chance(0.5)?2:-2);
+        degree = clamp(degree,0,maxDegree-1);
+      } else degree=0;
+      s.note = degreeToNote(sc, p.root, degree);
+      s.accent = first || rng.chance(0.15 + 0.35*p.density);
+      s.velocity = s.accent ? 110 : 78;
+    }
+  }
+  for (let i=0;i<pat.length;i++){
+    if (!pat.steps[i].active) continue;
+    let j=i+1; while (j<pat.length && !pat.steps[j].active) j++;
+    if (j<pat.length){
+      const interval = Math.abs(pat.steps[j].note - pat.steps[i].note);
+      if (interval>0 && interval<=2 && rng.chance(0.5)) pat.steps[i].slide = true;
+    }
+  }
+  if (pat.length>=2){
+    let active=0; for (let i=0;i<pat.length;i++) if (pat.steps[i].active) active++;
+    if (active<2){
+      pat.steps[0].active=true; pat.steps[0].note=degreeToNote(sc,p.root,0); pat.steps[0].accent=true; pat.steps[0].velocity=110;
+      let at=Math.floor(pat.length/2); if (at===0) at=1;
+      pat.steps[at].active=true; pat.steps[at].note=degreeToNote(sc,p.root, fifth>0?fifth:1); pat.steps[at].velocity=78;
+    }
+    let firstNote=-1, distinct=false;
+    for (let i=0;i<pat.length;i++) if (pat.steps[i].active){ if (firstNote<0) firstNote=pat.steps[i].note; else if (pat.steps[i].note!==firstNote) distinct=true; }
+    if (!distinct){
+      for (let i=pat.length-1;i>=0;i--) if (pat.steps[i].active){
+        let alt=degreeToNote(sc,p.root, fifth>0?fifth:1);
+        if (alt===firstNote) alt=degreeToNote(sc,p.root,1);
+        if (alt===firstNote) alt=firstNote+12;
+        pat.steps[i].note=alt; break;
+      }
+    }
+  }
+  let anyAccent=false; for (let i=0;i<pat.length;i++) if (pat.steps[i].accent) anyAccent=true;
+  if (!anyAccent){ pat.steps[0].active=true; pat.steps[0].accent=true; pat.steps[0].velocity=110; }
+  return pat;
+}
+function mutate(inPat, mseed, p){
+  const out = JSON.parse(JSON.stringify(inPat));
+  const rng = makeRng(mseed||1);
+  const sc = SCALES[p.scale] || SCALES.hijaz;
+  const op = rng.below(4);
+  const i = rng.below(out.length);
+  const s = out.steps[i];
+  if (op===0){ s.active=!s.active; if (s.active && s.note===0) s.note=degreeToNote(sc,p.root,0); }
+  else if (op===1){ if (s.active){ const dir=rng.chance(0.5)?1:-1; s.note=clamp(s.note+(dir>0?2:-2),0,127);} else { s.active=true; s.note=degreeToNote(sc,p.root,0); } }
+  else if (op===2){ s.accent=!s.accent; s.velocity=s.accent?110:78; }
+  else { s.slide=!s.slide; }
+  return out;
+}
+
+// ---------- audio (303-ish mono voice + simple drums) ----------
+let actx=null, osc=null, filt=null, amp=null, master=null, noiseBuf=null;
+function initAudio(){
+  if (actx) return;
+  actx = new (window.AudioContext||window.webkitAudioContext)();
+  master = actx.createGain(); master.gain.value=0.9; master.connect(actx.destination);
+  osc = actx.createOscillator(); osc.type='sawtooth';
+  filt = actx.createBiquadFilter(); filt.type='lowpass'; filt.frequency.value=350; filt.Q.value=9;
+  amp = actx.createGain(); amp.gain.value=0.0001;
+  osc.connect(filt); filt.connect(amp); amp.connect(master);
+  osc.start();
+}
+function midiToFreq(n){ return 440*Math.pow(2,(n-69)/12); }
+function bassNote(note, accent, glideIn, slideOut, t, dur){
+  const f = midiToFreq(note);
+  if (glideIn){ osc.frequency.setTargetAtTime(f, t, 0.05); }
+  else { osc.frequency.cancelScheduledValues(t); osc.frequency.setValueAtTime(f, t); }
+  if (!glideIn){
+    const peak = accent?5200:2500, base=320;
+    filt.frequency.cancelScheduledValues(t);
+    filt.frequency.setValueAtTime(peak, t);
+    filt.frequency.exponentialRampToValueAtTime(base, t + Math.max(0.05, dur*1.1));
+    filt.Q.cancelScheduledValues(t); filt.Q.setValueAtTime(accent?16:9, t);
+    const lvl = accent?0.34:0.24;
+    amp.gain.cancelScheduledValues(t);
+    amp.gain.setValueAtTime(0.0001, t);
+    amp.gain.exponentialRampToValueAtTime(lvl, t+0.006);
+  }
+  if (!slideOut){ amp.gain.setTargetAtTime(0.0001, t + dur*0.9, 0.03); }
+}
+function kick(t){
+  const o=actx.createOscillator(), g=actx.createGain();
+  o.type='sine'; o.frequency.setValueAtTime(150,t); o.frequency.exponentialRampToValueAtTime(48,t+0.12);
+  g.gain.setValueAtTime(0.9,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.16);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t+0.2);
+}
+function getNoise(){
+  if (!noiseBuf){ noiseBuf=actx.createBuffer(1, Math.floor(actx.sampleRate*0.2), actx.sampleRate);
+    const d=noiseBuf.getChannelData(0); for (let i=0;i<d.length;i++) d[i]=Math.random()*2-1; }
+  return noiseBuf;
+}
+function hat(t){
+  const s=actx.createBufferSource(); s.buffer=getNoise();
+  const hp=actx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=7000;
+  const g=actx.createGain(); g.gain.setValueAtTime(0.16,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.04);
+  s.connect(hp); hp.connect(g); g.connect(master); s.start(t); s.stop(t+0.06);
+}
+
+// ---------- transport ----------
+const params = { scale:'hijaz', length:7, density:0.55, ternary:true, root:33, octaveSpan:1 };
+let bpm=128, drumsOn=true, ternaryFeel=true;
+let current = generate((Math.random()*4294967295)>>>0, params);
+let playing=false, timer=null;
+let bassTime=0, bassStep=0, lastSlide=false, kickTime=0, hatTime=0;
+const LOOKAHEAD=0.1;
+function stepDur(){ return (60/bpm) * (ternaryFeel ? (1/3) : (1/4)); }
+function beatDur(){ return 60/bpm; }
+function scheduleStep(i, t){
+  const s = current.steps[i];
+  if (s && s.active){
+    const dur = stepDur() * (s.slide ? 1.0 : 0.55);
+    bassNote(s.note, s.accent, lastSlide, s.slide, t, dur);
+    lastSlide = s.slide;
+  }
+}
+function scheduler(){
+  const now = actx.currentTime;
+  while (bassTime < now + LOOKAHEAD){
+    scheduleStep(bassStep, bassTime);
+    bassTime += stepDur();
+    bassStep = (bassStep+1) % current.length;
+  }
+  if (drumsOn){
+    while (kickTime < now + LOOKAHEAD){ kick(kickTime); kickTime += beatDur(); }
+    while (hatTime  < now + LOOKAHEAD){ hat(hatTime);  hatTime  += beatDur()/2; }
+  }
+}
+function start(){
+  initAudio();
+  if (actx.state==='suspended') actx.resume();
+  if (playing) return;
+  playing=true;
+  const t = actx.currentTime + 0.08;
+  bassTime=t; bassStep=0; lastSlide=false; kickTime=t; hatTime=t;
+  timer=setInterval(scheduler, 25);
+}
+function stop(){
+  playing=false; if (timer) clearInterval(timer); timer=null;
+  if (amp){ amp.gain.cancelScheduledValues(actx.currentTime); amp.gain.setTargetAtTime(0.0001, actx.currentTime, 0.02); }
+}
+
+// ---------- UI ----------
+const $ = id => document.getElementById(id);
+function drawSteps(){
+  const box = $("steps"); box.replaceChildren();
+  for (let i=0;i<current.length;i++){
+    const s = current.steps[i];
+    const c = document.createElement("div"); c.className = "cell" + (s.active?" on":"");
+    const a = document.createElement("div"); a.className = "acc" + (s.accent?" show":"");
+    const sl = document.createElement("div"); sl.className = "sl" + (s.slide?" show":""); sl.textContent="~";
+    c.appendChild(a); c.appendChild(sl); box.appendChild(c);
+  }
+}
+function refresh(){ $("seedlbl").textContent = "#" + current.seed; drawSteps(); }
+function regen(){
+  const seed = (Math.random()*4294967295)>>>0;
+  current = generate(seed, params);
+  bassStep = 0;
+  refresh();
+  start();
+}
+const kept = [];
+function keep(){
+  if (kept.some(k=>k.seed===current.seed)) return;
+  kept.push({ seed:current.seed, scale:params.scale, len:current.length });
+  const box = $("kept"); box.replaceChildren();
+  box.appendChild(document.createTextNode("kept: "));
+  kept.forEach((k, idx) => {
+    const code = document.createElement("code"); code.textContent = "#"+k.seed;
+    box.appendChild(code);
+    box.appendChild(document.createTextNode(" ("+k.scale+", len "+k.len+")" + (idx<kept.length-1 ? "   " : "")));
+  });
+}
+
+$("smiley").addEventListener("click", regen);
+$("genBtn").addEventListener("click", regen);
+$("mutBtn").addEventListener("click", ()=>{ current = mutate(current, (Math.random()*4294967295)>>>0, params); refresh(); start(); });
+$("keepBtn").addEventListener("click", keep);
+$("stopBtn").addEventListener("click", stop);
+$("scale").addEventListener("change", e=>{ params.scale=e.target.value; });
+$("length").addEventListener("input", e=>{ params.length=+e.target.value; $("lengthOut").textContent=e.target.value; });
+$("density").addEventListener("input", e=>{ params.density=+e.target.value; $("densityOut").textContent=(+e.target.value).toFixed(2); });
+$("tempo").addEventListener("input", e=>{ bpm=+e.target.value; $("tempoOut").textContent=e.target.value; });
+$("ternary").addEventListener("change", e=>{ params.ternary=e.target.checked; ternaryFeel=e.target.checked; });
+$("drums").addEventListener("change", e=>{ drumsOn=e.target.checked; const t=actx?actx.currentTime+0.05:0; kickTime=t; hatTime=t; });
+
+refresh();
+</script>
+</body>
+</html>
