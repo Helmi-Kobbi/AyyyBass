@@ -38,3 +38,8 @@ cmake-build-*/
 # Env
 .env
 .env.local
+
+# build outputs
+/ayyybass
+/ayyy_tests
+*.mid
