@@ -6,7 +6,9 @@
 
 **Architecture:** A pure C++17 `core/` library (the *brain* — data model, seeded RNG, scales, generation + mutation) with zero I/O and zero dependencies, so it later compiles unchanged to wasm and ESP32. A separate `platform/midi/` layer (a *body*) renders a `Pattern` to MIDI events (ternary timing, slide as legato overlap, accent as velocity) and serializes a Standard MIDI File. An `apps/cli/` thin wrapper parses arguments and writes the file. Generation is seed-deterministic: the same seed + params always yields the same pattern (so a pattern has a stable number, and so everything is unit-testable with golden values).
 
-**Tech Stack:** C++17 · CMake · [doctest](https://github.com/doctest/doctest) (single-header unit tests) · hand-rolled SMF writer (no MIDI libraries — keeps it portable to embedded).
+**Tech Stack:** C++17 · a tiny Makefile (`make test`) using the system `clang++`/`c++` — cmake is intentionally avoided to keep zero setup · [doctest](https://github.com/doctest/doctest) (single-header unit tests) · hand-rolled SMF writer (no MIDI libraries — keeps it portable to embedded).
+
+> **Build note (toolchain reality):** cmake is not installed; we use a wildcard Makefile instead. Wherever a task below says `cmake -S . -B build`, `cmake --build build`, or `ctest --test-dir build`, the real command is **`make test`** (compiles everything and runs the unit tests). New `.cpp` files are picked up automatically.
 
 ---
 

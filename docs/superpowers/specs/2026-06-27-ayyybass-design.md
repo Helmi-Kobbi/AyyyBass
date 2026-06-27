@@ -83,7 +83,10 @@ A simple, *mutable* backing groove so the bassline is heard in context (and demo
 ## MIDI / targets
 
 Notes + velocity (accent) + slide (legato/overlap; pitch-bend fallback) + optional CC.
-Targets: Behringer TD-3 & clones, Crave, Edge/Spice, Roland-style analog, DAW (Ableton/Bitwig), Eurorack via MIDI-to-CV.
+
+**User-selectable MIDI output / routing** — the player picks where notes go. This is a *live-output* feature of the bodies, not the file: the web playground via the Web MIDI API (a dropdown of output ports), and the hardware via DIN / USB-MIDI. (The MIDI-file export in Plan 1 is "routed" by the host DAW.)
+
+Targets: Behringer **TD-3-MO** (Devil Fish-style mod — wider slide/accent/filter plus extra MIDI CCs we can drive for expression; **primary target**) · TD-3 & clones · Crave · Edge/Spice · Roland-style analog · DAW (Ableton/Bitwig) · Eurorack via MIDI-to-CV.
 
 ## Build order
 
