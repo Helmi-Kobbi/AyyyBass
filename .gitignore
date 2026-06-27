@@ -1,0 +1,40 @@
+# macOS
+.DS_Store
+
+# Node / web
+node_modules/
+dist/
+build/
+.cache/
+*.log
+
+# WASM / Emscripten build output
+*.wasm
+*.o
+*.a
+
+# Rust
+target/
+
+# Python tooling
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# C/C++ build
+cmake-build-*/
+
+# PlatformIO / ESP32 firmware
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Env
+.env
+.env.local
