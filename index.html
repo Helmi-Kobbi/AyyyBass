@@ -5,12 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>AyyyBass — playground</title>
 <style>
-  :root { --yellow:#FFD21E; --bg:#16191b; --panel:#202528; --line:#33383b; --text:#e6e8e9; --muted:#9aa0a3; --red:#e24b4a; --cyan:#7fe3d5; }
+  :root { --yellow:#FFD21E; --bg:#16191b; --panel:#202528; --line:#33383b; --text:#e6e8e9; --muted:#9aa0a3; --red:#e24b4a; --cyan:#7fe3d5; --terra:#c4633a; --ochre:#d89b4a; }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,Segoe UI,Roboto,sans-serif; -webkit-font-smoothing:antialiased; }
   .wrap { max-width:760px; margin:0 auto; padding:24px 18px 48px; }
   h1 { font-weight:500; font-size:20px; margin:0 0 2px; }
-  .sub { color:var(--muted); font-size:13px; margin:0 0 20px; }
+  .sub { color:var(--muted); font-size:13px; margin:0 0 6px; }
+  .berber { display:block; width:100%; height:24px; margin:12px 0 18px; opacity:.85; }
   .stage { display:flex; gap:24px; align-items:center; flex-wrap:wrap; }
   .smiley { cursor:pointer; user-select:none; transition:transform .07s ease; flex:0 0 auto; }
   .smiley:active { transform:scale(0.94); }
@@ -27,6 +28,10 @@
   .ctrl output { font-size:13px; color:var(--text); text-align:right; font-variant-numeric:tabular-nums; }
   input[type=range]{ width:100%; accent-color:var(--yellow); }
   select { background:#15181a; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:6px 8px; font-size:13px; }
+  .octrow { display:flex; align-items:center; gap:10px; }
+  .octval { min-width:18px; text-align:center; font-variant-numeric:tabular-nums; font-size:14px; }
+  .mini { background:#15181a; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:6px 12px; font-size:14px; cursor:pointer; }
+  .mini:hover { border-color:#555b5e; }
   .toggles { display:flex; gap:18px; flex-wrap:wrap; margin-top:6px; }
   .toggles label { font-size:13px; color:var(--text); display:flex; gap:7px; align-items:center; cursor:pointer; }
   .steps { display:flex; gap:4px; flex-wrap:wrap; margin-top:6px; }
@@ -39,19 +44,45 @@
   .kept { margin-top:8px; font-size:13px; color:var(--muted); line-height:1.8; }
   .kept code { color:var(--cyan); background:#15181a; padding:1px 6px; border-radius:5px; }
   .hint { color:var(--muted); font-size:12px; margin-top:18px; line-height:1.6; }
+  .info { margin-top:30px; border-top:1px solid var(--line); padding-top:18px; }
+  .info h2 { font-size:16px; font-weight:500; margin:0 0 8px; }
+  .info p { font-size:13.5px; color:var(--muted); line-height:1.65; margin:6px 0; }
+  .info .meta { font-size:12px; color:#7d8285; }
+  .info b { color:var(--text); }
+  .flag { letter-spacing:3px; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>AyyyBass <span style="color:var(--muted);font-weight:400;">— playground</span></h1>
-  <p class="sub">press the smiley → hear a Maghrebi-acid line. don't like it? press again. like it? keep it.</p>
+  <p class="sub">press the smiley → hear a North African acid line. don't like it? press again. like it? keep it.</p>
+
+  <svg class="berber" width="100%" height="24" aria-hidden="true">
+    <defs>
+      <pattern id="berb" width="30" height="24" patternUnits="userSpaceOnUse">
+        <path d="M15 3 L27 12 L15 21 L3 12 Z" fill="none" stroke="#c4633a" stroke-width="1.4"/>
+        <path d="M15 8 L19 12 L15 16 L11 12 Z" fill="#d89b4a"/>
+        <path d="M0 12 L3 12 M27 12 L30 12" stroke="#c4633a" stroke-width="1.2"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="24" fill="url(#berb)"/>
+  </svg>
 
   <div class="stage">
-    <svg class="smiley" id="smiley" width="150" height="150" viewBox="0 0 150 150" role="button" aria-label="generate">
-      <circle cx="75" cy="75" r="70" fill="#FFD21E"/>
-      <ellipse cx="52" cy="60" rx="8" ry="15" fill="#141414"/>
-      <ellipse cx="98" cy="60" rx="8" ry="15" fill="#141414"/>
-      <path d="M44 88 Q75 124 106 88" fill="none" stroke="#141414" stroke-width="11" stroke-linecap="round"/>
+    <svg class="smiley" id="smiley" width="160" height="160" viewBox="0 0 160 160" role="button" aria-label="generate">
+      <circle cx="80" cy="88" r="62" fill="#FFD21E"/>
+      <path d="M34 38 L34 56 Q80 68 126 56 L126 38 Z" fill="#b11f2e"/>
+      <ellipse cx="80" cy="38" rx="46" ry="13" fill="#c8283a"/>
+      <ellipse cx="80" cy="38" rx="46" ry="13" fill="none" stroke="#8c1622" stroke-width="1.5"/>
+      <path d="M96 27 Q132 56 133 104" fill="none" stroke="#141414" stroke-width="3"/>
+      <g stroke="#141414" stroke-width="2.5" stroke-linecap="round">
+        <line x1="133" y1="104" x2="128" y2="118"/>
+        <line x1="133" y1="104" x2="133" y2="120"/>
+        <line x1="133" y1="104" x2="138" y2="118"/>
+      </g>
+      <ellipse cx="58" cy="80" rx="8" ry="14" fill="#141414"/>
+      <ellipse cx="102" cy="80" rx="8" ry="14" fill="#141414"/>
+      <path d="M50 104 Q80 138 110 104" fill="none" stroke="#141414" stroke-width="11" stroke-linecap="round"/>
     </svg>
     <div class="stagecol">
       <p class="seedline">pattern <b id="seedlbl">—</b></p>
@@ -69,11 +100,30 @@
     <div class="ctrl">
       <label for="scale">scale</label>
       <select id="scale">
-        <option value="hijaz">hijaz (Maghrebi)</option>
+        <option value="hijaz">hijaz (North African)</option>
         <option value="pentatonic">pentatonic (Gnawa)</option>
         <option value="kurd">kurd</option>
         <option value="nahawand">nahawand</option>
       </select>
+      <output></output>
+    </div>
+    <div class="ctrl">
+      <label for="key">key</label>
+      <select id="key">
+        <option value="0">C</option><option value="1">C#</option><option value="2">D</option>
+        <option value="3">D#</option><option value="4">E</option><option value="5">F</option>
+        <option value="6">F#</option><option value="7">G</option><option value="8">G#</option>
+        <option value="9" selected>A</option><option value="10">A#</option><option value="11">B</option>
+      </select>
+      <output></output>
+    </div>
+    <div class="ctrl">
+      <label>octave</label>
+      <div class="octrow">
+        <button class="mini" id="octDown">oct −</button>
+        <span class="octval" id="octVal">1</span>
+        <button class="mini" id="octUp">oct +</button>
+      </div>
       <output></output>
     </div>
     <div class="ctrl">
@@ -103,6 +153,14 @@
     This runs a faithful JS twin of the C++ brain — seed numbers match the real engine.
     Keep the ones you like and tell me their numbers; that's how we tune the feel by ear.
   </p>
+
+  <div class="info">
+    <h2>AyyyBass — an open-source North African acid instrument</h2>
+    <p>One button, one hypnotic ternary acid line. Gnawa / guembri roots meeting the 303 squelch — from the lila to the rave. Tunisia, Algeria, Morocco.</p>
+    <p><b>One body, infinite brains.</b> The generator is a swappable "brain" — fork it for your own style or culture. This page runs the North-African-acid brain.</p>
+    <p class="meta">Open source · designed &amp; built with AI · by Helmi · <span class="flag">🇹🇳 🇩🇿 🇲🇦</span></p>
+    <p class="meta" id="licline">MIT licensed &middot; source: github.com/Helmi-Kobbi/AyyyBass &mdash; fork a brain, open a PR.</p>
+  </div>
 </div>
 
 <script>
@@ -257,6 +315,7 @@ function hat(t){
 // ---------- transport ----------
 const params = { scale:'hijaz', length:7, density:0.55, ternary:true, root:33, octaveSpan:1 };
 let bpm=128, drumsOn=true, ternaryFeel=true;
+let keyPC=9, octave=1; // A1 -> 33
 let current = generate((Math.random()*4294967295)>>>0, params);
 let playing=false, timer=null;
 let bassTime=0, bassStep=0, lastSlide=false, kickTime=0, hatTime=0;
@@ -317,6 +376,15 @@ function regen(){
   refresh();
   start();
 }
+function applyRoot(){
+  const nr = clamp((octave+1)*12 + keyPC, 0, 120);
+  const delta = nr - params.root;
+  if (delta !== 0){
+    for (let i=0;i<current.length;i++) if (current.steps[i].active) current.steps[i].note = clamp(current.steps[i].note + delta, 0, 127);
+    params.root = nr;
+    refresh();
+  } else { params.root = nr; }
+}
 const kept = [];
 function keep(){
   if (kept.some(k=>k.seed===current.seed)) return;
@@ -336,6 +404,9 @@ $("mutBtn").addEventListener("click", ()=>{ current = mutate(current, (Math.rand
 $("keepBtn").addEventListener("click", keep);
 $("stopBtn").addEventListener("click", stop);
 $("scale").addEventListener("change", e=>{ params.scale=e.target.value; });
+$("key").addEventListener("change", e=>{ keyPC=+e.target.value; applyRoot(); });
+$("octDown").addEventListener("click", ()=>{ octave=clamp(octave-1,0,4); $("octVal").textContent=octave; applyRoot(); });
+$("octUp").addEventListener("click", ()=>{ octave=clamp(octave+1,0,4); $("octVal").textContent=octave; applyRoot(); });
 $("length").addEventListener("input", e=>{ params.length=+e.target.value; $("lengthOut").textContent=e.target.value; });
 $("density").addEventListener("input", e=>{ params.density=+e.target.value; $("densityOut").textContent=(+e.target.value).toFixed(2); });
 $("tempo").addEventListener("input", e=>{ bpm=+e.target.value; $("tempoOut").textContent=e.target.value; });
