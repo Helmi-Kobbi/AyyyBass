@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 160 160" role="img" aria-label="AyyyBass — acid smiley wearing a Tunisian chechia">
+  <circle cx="80" cy="88" r="62" fill="#FFD21E"/>
+  <path d="M34 38 L34 56 Q80 68 126 56 L126 38 Z" fill="#b11f2e"/>
+  <ellipse cx="80" cy="38" rx="46" ry="13" fill="#c8283a"/>
+  <ellipse cx="80" cy="38" rx="46" ry="13" fill="none" stroke="#8c1622" stroke-width="1.5"/>
+  <path d="M96 27 Q132 56 133 104" fill="none" stroke="#141414" stroke-width="3"/>
+  <g stroke="#141414" stroke-width="2.5" stroke-linecap="round">
+    <line x1="133" y1="104" x2="128" y2="118"/>
+    <line x1="133" y1="104" x2="133" y2="120"/>
+    <line x1="133" y1="104" x2="138" y2="118"/>
+  </g>
+  <ellipse cx="58" cy="80" rx="8" ry="14" fill="#141414"/>
+  <ellipse cx="102" cy="80" rx="8" ry="14" fill="#141414"/>
+  <path d="M50 104 Q80 138 110 104" fill="none" stroke="#141414" stroke-width="11" stroke-linecap="round"/>
+</svg>
